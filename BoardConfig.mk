@@ -32,32 +32,31 @@ QCOM_BOARD_PLATFORMS += $(TARGET_BOARD_PLATFORM)
 BOARD_CUSTOM_BOOTIMG_MK := $(DEVICE_PATH)/mkbootimg.mk
 
 TARGET_KERNEL_ARCH := $(TARGET_ARCH)
-BOARD_KERNEL_IMAGE_NAME := Image.gz
+BOARD_KERNEL_IMAGE_NAME := Image
 TARGET_PREBUILT_KERNEL := $(DEVICE_PATH)/prebuilt/$(BOARD_KERNEL_IMAGE_NAME)
 BOARD_INCLUDE_RECOVERY_DTBO := true
 BOARD_PREBUILT_DTBOIMAGE := $(DEVICE_PATH)/prebuilt/dtbo.img
 
 BOARD_KERNEL_CMDLINE := \
-    console=null \
     androidboot.hardware=qcom \
     androidboot.memcg=1 \
-    lpm_levels.sleep_disabled=1 \
-    video=vfb:640x400,bpp=32,memsize=3072000 \
-    msm_rtb.filter=0x237 \
-    service_locator.enable=1 \
     androidboot.usbcontroller=a600000.dwc3 \
-    swiotlb=2048 \
-    printk.devkmsg=on \
+    console=null \
     firmware_class.path=/vendor/firmware_mnt/image \
-    loop.max_part=7
+    loop.max_part=7 \
+    lpm_levels.sleep_disabled=1 \
+    msm_rtb.filter=0x237 \
+    printk.devkmsg=on \
+    service_locator.enable=1 \
+    swiotlb=2048
 
 BOARD_KERNEL_BASE := 0x00000000
 BOARD_KERNEL_PAGESIZE := 4096
 BOARD_MKBOOTIMG_ARGS := \
     --dtb $(DEVICE_PATH)/prebuilt/dtb \
     --kernel_offset 0x00008000 \
-    --ramdisk_offset 0x02000000 \
-    --tags_offset 0x01e00000 \
+    --ramdisk_offset 0x01000000 \
+    --tags_offset 0x00000100 \
     --dtb_offset 0x01f00000 \
     --header_version 2
 BOARD_ROOT_EXTRA_FOLDERS := \
