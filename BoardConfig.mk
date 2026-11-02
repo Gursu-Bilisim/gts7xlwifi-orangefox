@@ -117,7 +117,6 @@ RECOVERY_SDCARD_ON_DATA := true
 TARGET_USES_MKE2FS := true
 
 # TWRP specific build flags
-TW_THEME := landscape_hdpi
 TW_SCREEN_BLANK_ON_BOOT := true
 TW_INPUT_BLACKLIST := "hbtp_vm"
 TW_BRIGHTNESS_PATH := "/sys/class/backlight/panel0-backlight/brightness"
@@ -145,14 +144,15 @@ TW_INCLUDE_NTFS_3G := true
 TW_INCLUDE_LPDUMP := true
 TW_INCLUDE_LPTOOLS := true
 TW_FRAMERATE := 120
-RECOVERY_TOUCHSCREEN_SWAP_XY := true
-RECOVERY_TOUCHSCREEN_FLIP_Y := true
 
-TW_THEME := landscape_hdpi
-TW_ROTATION := 90
 
 # TWRP Configuration: Logd
 TWRP_INCLUDE_LOGCAT := true
 TARGET_USES_LOGD := true
 TW_INCLUDE_LIBRESETPROP := true
 TW_INCLUDE_RESETPROP := true
+
+# OrangeFox yalniz dikey tema tasir. T970 cerceve tamponu yatay (2800x1752):
+# 270 derece dondurme dikey yapar, dokunmatik koordinatlari donusumsuz eslesir.
+TW_THEME := portrait_hdpi
+TW_ROTATION := 270
