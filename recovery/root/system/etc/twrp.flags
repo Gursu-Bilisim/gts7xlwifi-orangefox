@@ -25,7 +25,7 @@ odm                 /odm         erofs       ro                                 
 
 # ETC Moint Point
 /cache              ext4         /dev/block/bootdevice/by-name/cache
-/mnt/vendor/efs     ext4         /dev/block/bootdevice/by-name/efs               flags=display="EFS";backup=1
+/efs_image          emmc    /dev/block/bootdevice/by-name/efs      flags=display="EFS";backup=1;flashimg=1
 /sec_efs            ext4         /dev/block/bootdevice/by-name/sec_efs           flags=display="Sec EFS";backup=1
 
 /omr		        ext4		/dev/block/bootdevice/by-name/omr		         flags=wipeingui;display="OMR"
@@ -35,12 +35,12 @@ odm                 /odm         erofs       ro                                 
 /optics_image     	emmc		/dev/block/bootdevice/by-name/optics	       	 flags=backup=1;flashimg=1;display="Optics Image"
 /prism_image	    emmc		/dev/block/bootdevice/by-name/prism		         flags=backup=1;flashimg=1;display="Prism Image"
 
-/mnt/vendor/persist ext4         /dev/block/bootdevice/by-name/persist           flags=display="Persist";backup=1
+/persist_image      emmc    /dev/block/bootdevice/by-name/persist  flags=display="Persist";backup=1;flashimg=1
 
 # Samsung ODE
 /keydata            ext4         /dev/block/bootdevice/by-name/keydata           flags=display="Keydata";wipeingui
 /keyrefuge          ext4         /dev/block/bootdevice/by-name/keyrefuge         flags=display="Keyrefuge";wipeingui
 
 # USB-OTG Points
-/usb-otg	        vfat		 /dev/block/sde1	/dev/block/sde			     flags=display="USB-OTG";storage;wipeingui;removable
+/usb_otg	        vfat		 /dev/block/sde1	/dev/block/sde			     flags=display="USB-OTG";storage;wipeingui;removable
 /external_sd		    vfat	  /dev/block/mmcblk0p1	/dev/block/mmcblk0	flags=storage;wipeingui;removable
