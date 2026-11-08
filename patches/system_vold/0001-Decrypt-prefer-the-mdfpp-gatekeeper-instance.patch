@@ -1,0 +1,66 @@
+From 5c0bd46edbf25006d4f391484b2282c26f8a4e60 Mon Sep 17 00:00:00 2001
+From: kgursu <kgursu@users.noreply.github.com>
+Date: Sun, 8 Nov 2026 22:08:38 +0300
+Subject: [PATCH 1/2] Decrypt: prefer the "mdfpp" gatekeeper instance
+
+On Samsung SM8250 devices running LineageOS 24 (Android 17) the user
+credential is verified by the QSEE MDFPP gatekeeper module, which the
+AOSP gatekeeper service registers as IGatekeeper/mdfpp. The "default"
+instance (gatekeeper-1-0-qti) takes the SPU path in recovery and returns
+VERIFICATION_FAILED (-30) for the correct pattern, so the synthetic
+password cannot be unwrapped.
+
+Try IGatekeeper/mdfpp first (tryGetService does not wait) and fall back
+to the default instance, so devices without an mdfpp instance behave as
+before. Tested on SM-T970 (gts7xlwifi): verify returns OK, the auth token
+is added to keystore2 and user 0 CE storage unlocks.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01LV7KkPo6rUamzmMaty3K2W
+---
+ Decrypt.cpp | 15 +++++++++++++--
+ 1 file changed, 13 insertions(+), 2 deletions(-)
+
+diff --git a/Decrypt.cpp b/Decrypt.cpp
+index d9f034b..0ae061a 100755
+--- a/Decrypt.cpp
++++ b/Decrypt.cpp
+@@ -601,6 +601,17 @@ userid_t fakeUid(const userid_t uid) {
+     return 100000 + uid;
+ }
+ 
++// Samsung devices with an MDFPP (QSEE) gatekeeper register it as the "mdfpp"
++// instance, and Android verifies the credential there. The "default" instance
++// can take another path (for example the SPU on SM8250) and reject the same
++// credential. Prefer "mdfpp" when it is present, otherwise use "default".
++static android::sp<android::hardware::gatekeeper::V1_0::IGatekeeper> getGatekeeperService() {
++	auto gk = ::android::hardware::gatekeeper::V1_0::IGatekeeper::tryGetService("mdfpp");
++	if (gk == nullptr)
++		gk = ::android::hardware::gatekeeper::V1_0::IGatekeeper::getService();
++	return gk;
++}
++
+ bool Is_Weaver(const std::string& spblob_path, const std::string& handle_str) {
+ 	printf("Is_Weaver\n");
+ 	std::string weaver_file = spblob_path + handle_str + ".weaver";
+@@ -752,7 +763,7 @@ bool Decrypt_User_Synth_Pass(const userid_t user_id, const std::string& Password
+ 			int ret = -1;
+ 			bool request_reenroll = false;
+ 			android::sp<android::hardware::gatekeeper::V1_0::IGatekeeper> gk_device;
+-			gk_device = ::android::hardware::gatekeeper::V1_0::IGatekeeper::getService();
++			gk_device = getGatekeeperService();
+ 			if (gk_device == nullptr) {
+ 				printf("failed to get gatekeeper service\n");
+ 				return Free_Return(retval, weaver_key, &pwd);
+@@ -922,7 +933,7 @@ extern "C" bool Decrypt_User(const userid_t user_id, const std::string& Password
+     bool should_reenroll;
+ 	bool request_reenroll = false;
+ 	android::sp<android::hardware::gatekeeper::V1_0::IGatekeeper> gk_device;
+-	gk_device = ::android::hardware::gatekeeper::V1_0::IGatekeeper::getService();
++	gk_device = getGatekeeperService();
+ 	if (gk_device == nullptr)
+ 		return false;
+ 	android::hardware::hidl_vec<uint8_t> curPwdHandle;
+-- 
+2.43.0
+
