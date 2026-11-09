@@ -1,0 +1,34 @@
+minuitwrp: pad rotated surface buffers
+
+With TW_ROTATION 90/270 the console crashed (SIGSEGV, SEGV_ACCERR) in
+pixelflinger code reading just past a rotated text surface: full-width
+console lines need buffers above 64 KB, which scudo places against a
+guard page. Allocate two spare zeroed rows. Apply in bootable/recovery
+with: patch -p1 < 0001-minuitwrp-pad-rotated-surface-buffers.patch
+
+--- a/minuitwrp/truetype.cpp	2026-11-09 07:17:17.286884403 +0300
++++ b/minuitwrp/truetype.cpp	2026-11-09 07:17:17.305768348 +0300
+@@ -581,7 +581,9 @@
+ 		string_surface_rotated.stride  = string_surface_rotated.width;
+ 		string_surface_rotated.format  = e->surface.format;
+ 		// e->surface.format is GGL_PIXEL_FORMAT_A_8 (grayscale)
+-		string_surface_rotated.data    = (GGLubyte*) malloc(string_surface_rotated.stride * string_surface_rotated.height * 1);
++		// Two spare zeroed rows: pixelflinger reads past the last texel of a
++		// rotated surface, which faults when the buffer ends at a guard page.
++		string_surface_rotated.data    = (GGLubyte*) calloc((string_surface_rotated.height + 2) * string_surface_rotated.stride, 1);
+ 		surface_ROTATION_transform((gr_surface) &string_surface_rotated, (const gr_surface) &e->surface, 1);
+ 	}
+ 
+--- a/minuitwrp/graphics.cpp	2026-11-09 07:17:17.286943203 +0300
++++ b/minuitwrp/graphics.cpp	2026-11-09 07:17:17.305827749 +0300
+@@ -306,7 +306,9 @@
+         surface_rotated.height  = (gr_rotation == 180) ? surface->height : surface->width;
+         surface_rotated.stride  = surface_rotated.width;
+         surface_rotated.format  = surface->format;
+-        surface_rotated.data    = (GGLubyte*) malloc(surface_rotated.stride * surface_rotated.height * 4);
++        // Two spare zeroed rows: pixelflinger reads past the last texel of a
++        // rotated surface, which faults when the buffer ends at a guard page.
++        surface_rotated.data    = (GGLubyte*) calloc((surface_rotated.height + 2) * surface_rotated.stride, 4);
+         surface_ROTATION_transform((gr_surface) &surface_rotated, (const gr_surface) surface, 4);
+ 
+         gl->bindTexture(gl, &surface_rotated);
