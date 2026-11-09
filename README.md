@@ -9,6 +9,12 @@ trees for the Galaxy A52s 5G and S20 FE; the git history of those trees is kept.
 Tested build, test results and known gaps: [test-notes.md](test-notes.md). Every release carries
 its own `TEST-NOTES.md`.
 
+Discussion and feedback:
+[XDA thread](https://xdaforums.com/t/recovery-unofficial-orangefox-r12-0-for-galaxy-tab-s7-wi-fi-sm-t970-gts7xlwifi-with-data-decryption-on-lineageos-24.4808070/).
+Bug reports are welcome there or as GitHub issues. `/tmp/recovery.log` helps, but after a
+decrypting session it can contain the pattern or password that was entered: remove it before
+posting the log.
+
 ## What works
 
 - Decryption of FBE v2 with metadata encryption, and the lock screen credential: the QSEE
