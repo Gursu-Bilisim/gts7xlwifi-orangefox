@@ -129,7 +129,10 @@ TW_BACKUP_EXCLUSIONS := /data/fonts
 TW_EXTRA_LANGUAGES := true
 TW_EXCLUDE_DEFAULT_USB_INIT := true
 TW_INCLUDE_CRYPTO := true
-# --- FBE v2 + metadata decrypt (Inkypen twrp_gts7xl) ---
+# FBE v2 + metadata decryption (flags as in Inkypen twrp_gts7xl, SM-T976B).
+# Placeholder version and patch level. Measured on LineageOS 24 with metadata
+# encryption: /data decrypts and Android still unlocks it afterwards
+# (see patch-check.ps1).
 TW_INCLUDE_CRYPTO_FBE := true
 TW_INCLUDE_FBE_METADATA_DECRYPT := true
 TW_USE_FSCRYPT_POLICY := 2
@@ -137,7 +140,6 @@ PLATFORM_SECURITY_PATCH := 2127-12-31
 VENDOR_SECURITY_PATCH := $(PLATFORM_SECURITY_PATCH)
 PLATFORM_VERSION := 99.87.36
 PLATFORM_VERSION_LAST_STABLE := $(PLATFORM_VERSION)
-# --- decrypt blogu sonu ---
 TW_NO_EXFAT_FUSE := true
 TW_INCLUDE_NTFS_3G := true
 TW_INCLUDE_LPDUMP := true
@@ -151,7 +153,8 @@ TARGET_USES_LOGD := true
 TW_INCLUDE_LIBRESETPROP := true
 TW_INCLUDE_RESETPROP := true
 
-# OrangeFox yalniz dikey tema tasir. T970 cerceve tamponu yatay (2800x1752):
-# 270 derece dondurme dikey yapar, dokunmatik koordinatlari donusumsuz eslesir.
+# OrangeFox has a portrait theme only. The SM-T970 framebuffer is landscape
+# (2800x1752); a 270 degree rotation makes it portrait, and the touch panel
+# coordinates then match without a transform.
 TW_THEME := portrait_hdpi
 TW_ROTATION := 270

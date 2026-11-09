@@ -1,0 +1,69 @@
+gts7xlwifi-orangefox
+Copyright 2026 kgursu (Gursu-Bilisim)
+
+This repository continues the TWRP 12.1 device tree history below; the commits
+of the earlier authors are kept in git. Files written or changed for this
+repository are licensed under the Apache License, Version 2.0 (see LICENSE),
+like the build files they extend: Android.mk, AndroidProducts.mk,
+BoardConfig.mk, device.mk, twrp_gts7xlwifi.mk, vendorsetup.sh,
+recovery/root/system/etc/twrp.flags, patch-check.ps1, recovery-inspect.ps1,
+release.sh, test-notes.md and README.md. The commits from ddccd95 on are ours.
+
+Their parts keep their own authors and licenses:
+
+* Device tree history
+  - BlackMesa123, Galaxy A52s 5G (a52sxq) TWRP tree, from 2022-10-03.
+    https://github.com/TeamWin/android_device_samsung_a52sxq
+  - ata-kaner, adapted for the Galaxy S20 FE (r8q), from 2024-03-02.
+    https://github.com/TeamWin/android_device_samsung_r8q
+  - JeyKul, adapted for the Galaxy Tab S7+ Wi-Fi, from 2024-07-25; this
+    repository starts from commit a11529e (2025-08-28).
+    https://github.com/JeyKul/android_device_samsung_gts7lwifi-twrp
+  The build files carry "Copyright (C) 2022 The Android Open Source Project"
+  and "Copyright (C) 2022 The TWRP Open Source Project", Apache License 2.0.
+
+* recovery.fstab, recovery/root/init.recovery.qcom.rc,
+  recovery/root/init.recovery.usb.rc
+  The Linux Foundation, BSD 3-Clause license (notices kept in the files).
+  init.recovery.qcom.rc is changed here (persist and efs are unmounted on
+  twrp.all.users.decrypted=true).
+
+* recovery/root/vendor/etc/ueventd.rc
+  LineageOS android_device_samsung_sm8250-common, init/ueventd.qcom.rc at
+  commit d204502289e6f6aee62c0654acceea26a2e10312, unchanged.
+  The Linux Foundation, BSD 3-Clause license.
+  https://github.com/LineageOS/android_device_samsung_sm8250-common
+
+* recovery/root/system/bin/postrecoveryboot.sh, recovery/root/system/bin/fbedisabler
+  From the a52sxq and r8q history above, Apache License 2.0.
+
+* prebuilt/Image.gz, prebuilt/dtb, prebuilt/dtbo.img
+  Kernel, device tree and recovery DTBO taken from the recovery image of
+  LineageOS 24.0 for gts7xlwifi (24.0-20261029-nightly, Linux
+  4.19.325-cip136-st20-perf-gad129ac77e9d). The kernel was compressed with
+  gzip -9 -n here; no other change. GPL-2.0.
+  Source: https://github.com/LineageOS/android_kernel_samsung_sm8250
+
+* recovery/root/system/bin/* (except the two scripts above),
+  recovery/root/vendor/lib64/*, recovery/root/vendor/etc/gpfspath_oem_config.xml,
+  recovery/root/vendor/etc/init/*
+  Proprietary Samsung and Qualcomm vendor files, carried over from the tree
+  history above (first added for a52sxq and r8q). These files from the
+  LineageOS 24 gts7xlwifi vendor image (sm8250-common blobs, firmware
+  G780GXXSHEYJ1) replace or extend them: vendor/lib64/hw/gatekeeper.mdfpp.so,
+  vendor/lib64/hw/android.hardware.gatekeeper@1.0-impl-qti.so,
+  vendor/lib64/libcrypto-v33.so, vendor/lib64/libhidltransport.so,
+  vendor/lib64/libhwbinder.so. They are included unmodified so that the
+  recovery can reach the keymaster and gatekeeper. They are not covered by
+  this repository's license; all rights remain with their owners.
+
+* Reference only (no files copied)
+  Inkypen twrp_gts7xl (Galaxy Tab S7+ 5G, SM-T976B): FBE and metadata
+  decryption flags and the default brightness.
+
+* OrangeFox Recovery / TWRP / TeamWin android_system_vold
+  The recovery is built from OrangeFox fox_12.1 (based on TWRP), licensed
+  under GPL-3.0-or-later, with TeamWin android_system_vold (Apache License
+  2.0). Our changes are published in patches/: bootable_recovery.diff under
+  GPL-3.0-or-later (patches/COPYING), system_vold.diff under the Apache
+  License 2.0. See patches/README.md.
