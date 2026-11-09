@@ -1,0 +1,26 @@
+minuitwrp: clamp gr_blit to the source surface
+
+Backtrace of the console crash: android::rect_generic
+(libpixelflinger/scanline.cpp:2338) from gr_blit (graphics.cpp:323),
+reading just past a 4-byte-per-pixel buffer. gr_blit drew the requested
+w x h even when it exceeded the image, and pixelflinger does not clamp
+texture reads. Apply after 0001, in bootable/recovery: patch -p1 < 0002-minuitwrp-clamp-gr_blit-to-the-source-surface.patch
+
+--- a/minuitwrp/graphics.cpp	2026-11-09 07:21:56.434313997 +0300
++++ b/minuitwrp/graphics.cpp	2026-11-09 07:21:56.450902379 +0300
+@@ -278,6 +278,15 @@
+     GGLContext *gl = gr_context;
+     GGLSurface *surface = (GGLSurface*)source;
+ 
++    // Never read outside the source surface: pixelflinger does not clamp,
++    // and with TW_ROTATION the surface is first copied into an exact-size
++    // buffer, so a blit larger than the image read past its end and crashed.
++    if (sx < 0) sx = 0;
++    if (sy < 0) sy = 0;
++    if (w > (int)surface->width - sx) w = (int)surface->width - sx;
++    if (h > (int)surface->height - sy) h = (int)surface->height - sy;
++    if (w <= 0 || h <= 0) return;
++
+     if(surface->format == GGL_PIXEL_FORMAT_RGBX_8888)
+         gl->disable(gl, GGL_BLEND);
+ 
